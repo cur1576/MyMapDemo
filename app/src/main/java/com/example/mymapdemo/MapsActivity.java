@@ -116,6 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String provider = manager.getBestProvider(new Criteria(),true);
         Toast.makeText(this, "Provider: " + provider, Toast.LENGTH_SHORT).show();
         Location location = manager.getLastKnownLocation(provider);
+        location = getLastKnownLocation();
         if(location!=null){
             LatLng pos = new LatLng(location.getLatitude(),location.getLongitude());
             options.position(pos);
@@ -143,9 +144,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("Info", "found best last known location: %s" + l);
                 bestLocation = l;
             }
-        }
-        if (bestLocation == null) {
-            return null;
         }
         return bestLocation;
     }
