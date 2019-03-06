@@ -134,14 +134,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location bestLocation = null;
         for (String provider : providers) {
             @SuppressLint("MissingPermission") Location l = manager.getLastKnownLocation(provider);
-            Log.d("Info","last known location, provider: %s, location: %s" + provider);
+            Log.d("Info","last known location, provider: " + provider);
 
             if (l == null) {
                 continue;
             }
             if (bestLocation == null
                     || l.getAccuracy() < bestLocation.getAccuracy()) {
-                Log.d("Info", "found best last known location: %s" + l);
+                Log.d("Info", "found best last known location: " + l + "found by: " + provider);
                 bestLocation = l;
             }
         }
