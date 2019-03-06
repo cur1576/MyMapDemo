@@ -10,6 +10,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,10 +22,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final int REQUEST_PERMISSION_FINE = 123;
     private GoogleMap mMap;
+    private LocationManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         MarkerOptions options = new MarkerOptions();
-        LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        manager = (LocationManager) getSystemService(LOCATION_SERVICE);
         String provider = manager.getBestProvider(new Criteria(),true);
         Toast.makeText(this, "Provider: " + provider, Toast.LENGTH_SHORT).show();
         Location location = manager.getLastKnownLocation(provider);
@@ -122,5 +126,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,18));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos,18),10000,null);
         }
+    }
+
+    private Location getLastKnownLocation() {
+        List<String> providers = manager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            @SuppressLint("MissingPermission") Location l = manager.getLastKnownLocation(provider);
+            Log.d("Info","last known location, provider: %s, location: %s" + provider);
+
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null
+                    || l.getAccuracy() < bestLocation.getAccuracy()) {
+                Log.d("Info", "found best last known location: %s" + l);
+                bestLocation = l;
+            }
+        }
+        if (bestLocation == null) {
+            return null;
+        }
+        return bestLocation;
     }
 }
