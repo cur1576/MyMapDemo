@@ -105,6 +105,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+
+
         MarkerOptions options = new MarkerOptions();
         LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);
         String provider = manager.getBestProvider(new Criteria(),true);
