@@ -18,6 +18,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -81,6 +82,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                marker.setTitle("Du hast mich");
+                marker.showInfoWindow();
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                marker.setAlpha(0.5F);
+                marker.showInfoWindow();
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                marker.setAlpha(1.0F);
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                marker.setTitle("jetzt bin ich woanders");
+                marker.showInfoWindow();
+            }
+        });
 
         MarkerOptions options = new MarkerOptions();
         LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -92,6 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             options.position(pos);
             options.title("Hier bin ich!");
             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            options.draggable(true);
             mMap.addMarker(options);
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,18));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos,18),10000,null);
