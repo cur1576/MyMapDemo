@@ -1,16 +1,22 @@
 package com.example.mymapdemo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -46,9 +52,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
                     if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
@@ -63,14 +74,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
-
+    @SuppressLint("MissingPermission")
     private void doIt() {
+        mMap.setMyLocationEnabled(true);
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         MarkerOptions options = new MarkerOptions();
-        
+        LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        String provider = manager.getBestProvider(new Criteria(),true);
+        Toast.makeText(this, "Provider: " + provider, Toast.LENGTH_SHORT).show();
+        Location location = manager.getLastKnownLocation(provider);
+        if(location!=null){
+            LatLng pos = new LatLng(location.getLatitude(),location.getLongitude());
+            options.position(pos);
+            options.title("Hier bin ich!");
+            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            mMap.addMarker(options);
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,18));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos,18),10000,null);
+        }
     }
 }
