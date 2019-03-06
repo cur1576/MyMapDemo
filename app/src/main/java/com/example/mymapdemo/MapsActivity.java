@@ -113,10 +113,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         MarkerOptions options = new MarkerOptions();
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        String provider = manager.getBestProvider(new Criteria(),true);
-        Toast.makeText(this, "Provider: " + provider, Toast.LENGTH_SHORT).show();
-        Location location = manager.getLastKnownLocation(provider);
-        location = getLastKnownLocation();
+//        String provider = manager.getBestProvider(new Criteria(),true);
+//        Toast.makeText(this, "Provider: " + provider, Toast.LENGTH_SHORT).show();
+//        Location location = manager.getLastKnownLocation(provider);
+        Location location = getLastKnownLocation();
         if(location!=null){
             LatLng pos = new LatLng(location.getLatitude(),location.getLongitude());
             options.position(pos);
